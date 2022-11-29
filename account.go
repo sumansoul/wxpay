@@ -1,10 +1,5 @@
 package wxpay
 
-import (
-	"io/ioutil"
-	"log"
-)
-
 type Account struct {
 	appID     string
 	mchID     string
@@ -24,11 +19,6 @@ func NewAccount(appID string, mchID string, apiKey string, isSanbox bool) *Accou
 }
 
 // 设置证书
-func (a *Account) SetCertData(certPath string) {
-	certData, err := ioutil.ReadFile(certPath)
-	if err != nil {
-		log.Println("读取证书失败")
-		return
-	}
+func (a *Account) SetCertData(certData []byte) {
 	a.certData = certData
 }

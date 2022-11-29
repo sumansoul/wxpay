@@ -22,19 +22,25 @@ func XmlToMap(xmlStr string) Params {
 		value string
 	)
 
+	inBetween := false
 	for t, err := decoder.Token(); err == nil; t, err = decoder.Token() {
 		switch token := t.(type) {
-		case xml.StartElement: // 开始标签
+		case xml.StartElement:
 			key = token.Name.Local
-		case xml.CharData: // 标签内容
-			content := string([]byte(token))
-			value = content
-		}
-		if key != "xml" {
-			if value != "\n" {
-				params.SetString(key, value)
+			if key == "xml" {
+				continue
 			}
+			inBetween = true
+		case xml.CharData:
+			if !inBetween {
+				continue
+			}
+			value = string(token)
+			params[key] = value
+		case xml.EndElement:
+			inBetween = false
 		}
+
 	}
 
 	return params
